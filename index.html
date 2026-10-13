@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#c2410c"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Recipes">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<title>Recipe Finder</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:17px/1.4 -apple-system,system-ui,sans-serif;background:#fff7ed;color:#431407}
+header{background:#c2410c;color:#fff;padding:calc(env(safe-area-inset-top) + 16px) 18px 16px}
+h1{margin:0;font-size:24px}header p{margin:4px 0 0;opacity:.88;font-size:14px}
+h2{font-size:19px;margin:6px 0 10px}
+main{padding:14px;max-width:560px;margin:auto;padding-bottom:110px}
+.card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 4px #0001}
+.rc{display:flex;gap:12px;align-items:center;cursor:pointer}.emo{font-size:34px;width:52px;height:52px;flex:none;display:grid;place-items:center;background:#ffedd5;border-radius:14px}
+.rc img{width:52px;height:52px;border-radius:14px;object-fit:cover;flex:none}
+.grow{flex:1;min-width:0}.name{font-size:18px;font-weight:700}.meta{font-size:14px;color:#7c5a4a}
+.have{font-size:15px;font-weight:700;color:#15803d}.have.mid{color:#b45309}.miss{font-size:14px;color:#9a3412}
+.bar{height:6px;background:#fed7aa;border-radius:6px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:#16a34a}
+button{font:inherit;border:0;border-radius:12px;padding:12px 16px;min-height:48px;cursor:pointer}
+.pri{background:#c2410c;color:#fff;font-weight:700}.sec{background:#ffedd5;color:#431407}
+.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{background:#ffedd5;border-radius:24px;padding:10px 14px;min-height:44px;font-size:16px}
+.chip.on{background:#c2410c;color:#fff}.chip.x:after{content:" ✕";opacity:.6}
+.row{display:flex;align-items:center;gap:10px}
+input[type=text],input[type=search],select{width:100%;font:inherit;padding:12px;border:2px solid #fdba74;border-radius:12px;background:#fff;min-height:48px;color:inherit}
+.sw{position:relative;width:58px;height:34px;flex:none;display:inline-block}.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;background:#d6d3d1;border-radius:34px;transition:.2s}
+.sw span:before{content:"";position:absolute;width:28px;height:28px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+.sw input:checked+span{background:#c2410c}.sw input:checked+span:before{transform:translateX(24px)}
+.tg{display:flex;align-items:center;gap:12px;padding:8px 0;font-size:16px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;border-top:1px solid #fed7aa;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav button{flex:1;background:none;border-radius:0;font-size:12px;padding:8px 2px;min-height:60px;color:#7c5a4a;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button b{font-size:22px;font-weight:400}nav button.on{color:#c2410c;font-weight:700}
+.sugg{position:relative}.ac{position:absolute;left:0;right:0;top:100%;background:#fff;border-radius:12px;box-shadow:0 4px 14px #0003;z-index:3;max-height:260px;overflow:auto}
+.ac div{padding:13px 14px;border-bottom:1px solid #fff1e6;cursor:pointer}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.banner{background:#fef3c7;color:#78350f;border-radius:12px;padding:12px;font-size:14px;margin-bottom:12px}
+.empty{text-align:center;color:#7c5a4a;padding:30px 10px}
+dialog{border:0;border-radius:20px;padding:0;width:min(560px,96vw);max-height:90vh}dialog::backdrop{background:#0007}
+.dh{padding:18px 18px 8px;position:sticky;top:0;background:#fff}.db{padding:0 18px 18px}
+ul.ing{list-style:none;padding:0;margin:0}ul.ing li{padding:9px 0;border-bottom:1px solid #fff1e6;display:flex;gap:10px}
+ul.ing li.own{color:#15803d}ol{padding-left:22px}ol li{margin-bottom:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.tags span{font-size:12px;background:#dcfce7;color:#14532d;border-radius:10px;padding:3px 8px}
+.shop li{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #fff1e6;font-size:17px}.shop input{width:26px;height:26px}
+.shop li.done span{text-decoration:line-through;opacity:.5}
+.hide{display:none!important}
+</style></head><body>
+<header><h1>🥗 Recipe Finder</h1><p id="sub">Cook from what you have</p></header>
+<main>
+<section id="v-ideas">
+ <div class="filters"><select id="fMeal" aria-label="Meal type"><option value="">Any meal</option><option value="breakfast">Breakfast</option><option value="lunch">Lunch</option><option value="dinner">Dinner</option><option value="snack">Snack</option></select>
+ <select id="fTime" aria-label="Max time"><option value="0">Any time</option><option value="15">≤ 15 min</option><option value="30">≤ 30 min</option><option value="45">≤ 45 min</option><option value="60">≤ 60 min</option></select></div>
+ <label class="tg card" style="margin-bottom:12px"><span class="grow">Cook with what I have only</span><span class="sw"><input type="checkbox" id="only"><span></span></span></label>
+ <div id="dietNote" class="meta" style="margin:0 4px 10px"></div>
+ <div id="list"></div>
+ <div id="online" class="card"><div class="name">🌐 More ideas online</div><div class="meta">From TheMealDB. These aren't checked against your diet, so read the ingredients.</div><button class="sec" id="mealdb" style="margin-top:10px;width:100%">Search online</button><div id="olist" style="margin-top:10px"></div></div>
+</section>
+<section id="v-kitchen" class="hide">
+ <h2>My kitchen</h2>
+ <div class="sugg"><input type="search" id="addIng" placeholder="Add an ingredient (e.g. eggs)" autocomplete="off" enterkeyhint="done"><div class="ac hide" id="ac"></div></div>
+ <p class="meta">Tap an ingredient to remove it.</p>
+ <div class="chips" id="mine"></div>
+ <label class="tg card" style="margin-top:16px"><span class="grow"><b>Pantry staples on hand</b><br><span class="meta">Salt, pepper, oils, flour, sugar, vinegar, basic spices</span></span><span class="sw"><input type="checkbox" id="staples"><span></span></span></label>
+ <button class="sec" id="clearK" style="width:100%">Clear kitchen</button>
+</section>
+<section id="v-diet" class="hide">
+ <h2>Dietary preferences</h2><p class="meta">Recipes that don't fit every choice are hidden.</p>
+ <div class="chips" id="diets"></div>
+ <h2 style="margin-top:20px">Avoid ingredients</h2>
+ <input type="text" id="avoid" placeholder="e.g. mushrooms, cilantro">
+ <p class="meta">Separate with commas. Any recipe containing these is hidden.</p>
+</section>
+<section id="v-saved" class="hide"><h2>Favorites</h2><div id="favs"></div></section>
+<section id="v-shop" class="hide"><h2>Shopping list</h2>
+ <div class="row"><input type="text" id="shopAdd" placeholder="Add item"><button class="pri" id="shopBtn">Add</button></div>
+ <ul class="shop" id="shop" style="list-style:none;padding:0"></ul>
+ <div class="row"><button class="sec grow" id="shopClr">Remove checked</button><button class="sec grow" id="shopKit">Checked → kitchen</button></div>
+</section>
+</main>
+<nav><button data-v="ideas" class="on"><b>🍳</b>Ideas</button><button data-v="kitchen"><b>🧺</b>Kitchen</button><button data-v="diet"><b>🥦</b>Diet</button><button data-v="saved"><b>❤️</b>Saved</button><button data-v="shop"><b>🛒</b>List</button></nav>
+<dialog id="dlg"><div class="dh row"><div class="grow name" id="dT" style="font-size:22px"></div><button class="sec" id="dX" aria-label="Close">✕</button></div><div class="db" id="dB"></div></dialog>
+<script src="recipes.js"></script><script src="app.js"></script>
+</body></html>
