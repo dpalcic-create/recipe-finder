@@ -16,7 +16,7 @@ function renderIdeas(){
  $('#fMeal').value=S.meal;$('#fTime').value=S.time;$('#only').checked=S.only;
  $('#dietNote').textContent=(S.diets.length?'Diet: '+S.diets.map(d=>DIETS.find(x=>x[0]==d)[1]).join(', '):'No diet filters')+(avoidList().length?' · avoiding '+avoidList().join(', '):'')+' · '+S.kitchen.length+' ingredients in kitchen';
  let rs=RECIPES.filter(fits).filter(r=>!S.meal||r.meal==S.meal).filter(r=>!+S.time||r.time<=+S.time).map(r=>[r,score(r)]);
- if(S.kitchen.length){rs=rs.filter(([r,s])=>s.have>0);if(S.only)rs=rs.filter(([r,s])=>!s.miss.length);rs.sort((a,b)=>(b[1].have/b[1].need-a[1].have/a[1].need)||(b[1].have-a[1].have)||a[0].time-b[0].time)}
+ if(S.kitchen.length){rs=rs.filter(([r,s])=>s.have>0);if(S.only)rs=rs.filter(([r,s])=>!s.miss.length);rs.sort((a,b)=>((b[1].have-1.5*b[1].miss.length)-(a[1].have-1.5*a[1].miss.length))||(b[1].have-a[1].have)||a[0].time-b[0].time)}
  const intro=S.kitchen.length?'':`<div class="banner">Add what's in your kitchen (🧺 tab) and your diet (🥦 tab), and the best matches will rise to the top.</div>`;
  $('#list').innerHTML=intro+(rs.length?`<div class="meta" style="margin:0 4px 8px">${rs.length} recipe${rs.length>1?'s':''}</div>`+rs.map(([r,s])=>card(r,s)).join(''):`<div class="empty">No matching recipes.<br>${S.only?'Try turning off “Cook with what I have only”, or add':'Try loosening the filters or adding'} more ingredients.</div>`);
 }
